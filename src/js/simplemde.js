@@ -1577,11 +1577,40 @@ SimpleMDE.prototype.render = function(el) {
     false
   );
 
+  // an overlay which shorten long data-url of images
+  CodeMirror.defineMode("gfm-data-url", function(config, parserConfig) {
+    var dataURLOverlay = {
+      token: function(stream) {
+        if (stream.match("![")) {
+          while (stream.next() != null)
+            if (
+              stream.next() === "]" &&
+              (stream.match("(data:") || stream.match("(<data:"))
+            ) {
+              while (stream.next() != null)
+                if (stream.next() === ")") {
+                  stream.eat(")");
+                }
+              return "data-url";
+            }
+        }
+        while (stream.next() != null && !stream.match("![", false)) {
+          continue;
+        }
+        return null;
+      }
+    };
+    return CodeMirror.overlayMode(
+      CodeMirror.getMode(config, parserConfig.backdrop || "gfm"),
+      dataURLOverlay
+    );
+  });
+
   var mode, backdrop;
   if (options.spellChecker !== false) {
     mode = "spell-checker";
     backdrop = options.parsingConfig;
-    backdrop.name = "gfm";
+    backdrop.name = "gfm-data-url";
     backdrop.gitHubSpice = false;
 
     CodeMirrorSpellChecker({
@@ -1589,7 +1618,7 @@ SimpleMDE.prototype.render = function(el) {
     });
   } else {
     mode = options.parsingConfig;
-    mode.name = "gfm";
+    mode.name = "gfm-data-url";
     mode.gitHubSpice = false;
   }
 
