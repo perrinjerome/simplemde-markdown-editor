@@ -1647,17 +1647,46 @@ SimpleMDE.prototype.render = function(el) {
     e.preventDefault();
     e.stopPropagation();
     var paste = (e.clipboardData || window.clipboardData).getData("text/html");
-    // TODO: image
-    if (paste) {
+    if (paste) { // text/html
       paste = converter.makeMarkdown(paste);
       // clean it up a bit
       paste = paste.replace(/\<meta.*\>/g, "");
       paste = paste.replace(/\<span\>\<\/span\>/g, "");
       paste = paste.replace(/\<br\>/g, "");
-    } else {
+    } else { // text/plain
       paste = (e.clipboardData || window.clipboardData).getData("text");
     }
-    cm.replaceSelection(paste);
+    if (paste) {
+      return cm.replaceSelection(paste);
+    }
+
+    // image
+    var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    var promise_list = [];
+    for (var index = 0; index < items.length; index++) {
+      var item = items[index];
+      if (item.kind === "file") {
+        promise_list.push(
+          new Promise((resolve, reject) => {
+            var fr = new FileReader();
+            fr.onload = () => {
+              resolve(fr.result);
+            };
+            fr.onerror = reject;
+            fr.readAsDataURL(item.getAsFile());
+          })
+        );
+      }
+      Promise.all(promise_list)
+        .then(result_list => {
+          paste = "";
+          for (var index = 0; index <= items.length; index++) {
+            paste += "![image](" + result_list[index] + ")";
+          }
+          return cm.replaceSelection(paste);
+        })
+        .catch(console.error);
+    }
   });
 
   if (options.forceSync === true) {
