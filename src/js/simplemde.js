@@ -1652,8 +1652,9 @@ SimpleMDE.prototype.render = function(el) {
     if (paste) {
       paste = converter.makeMarkdown(paste);
       // clean it up a bit
-      paste = paste.replace("<span></span>", "");
-      paste = paste.replace("<br>", "");
+      paste = paste.replace(/\<meta.*\>/g, "");
+      paste = paste.replace(/\<span\>\<\/span\>/g, "");
+      paste = paste.replace(/\<br\>/g, "");
     } else {
       paste = (e.clipboardData || window.clipboardData).getData("text");
     }
