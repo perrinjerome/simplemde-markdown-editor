@@ -52,17 +52,21 @@ gulp.task("browserify", ["lint"], function() {
     .pipe(gulp.dest("./debug/"));
 });
 
-gulp.task("scripts", ["browserify:debug", "browserify", "lint"], function() {
-  var js_files = ["./debug/simplemde.js"];
+gulp.task(
+  "scripts",
+  [/*"browserify:debug", */ "browserify", "lint"],
+  function() {
+    var js_files = ["./debug/simplemde.js"];
 
-  return gulp
-    .src(js_files)
-    .pipe(concat("simplemde.min.js"))
-    .pipe(uglify())
-    .pipe(buffer())
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(gulp.dest("./dist/"));
-});
+    return gulp
+      .src(js_files)
+      .pipe(concat("simplemde.min.js"))
+      .pipe(uglify())
+      .pipe(buffer())
+      .pipe(header(banner, { pkg: pkg }))
+      .pipe(gulp.dest("./dist/"));
+  }
+);
 
 gulp.task("styles", [], function() {
   var css_files = [
