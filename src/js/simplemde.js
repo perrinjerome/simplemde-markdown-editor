@@ -8,6 +8,8 @@ require("./codemirror/tablist");
 require("codemirror/addon/display/fullscreen.js");
 require("codemirror/mode/markdown/markdown.js");
 require("codemirror/addon/mode/overlay.js");
+require("codemirror/addon/hint/show-hint.js");
+require("codemirror/addon/hint/anyword-hint.js");
 require("codemirror/addon/display/placeholder.js");
 require("codemirror/addon/selection/mark-selection.js");
 require("codemirror/mode/gfm/gfm.js");
@@ -1622,6 +1624,11 @@ SimpleMDE.prototype.render = function(el) {
     mode.name = "gfm-data-url";
     mode.gitHubSpice = false;
   }
+
+  keyMaps["Ctrl-Space"] = "autocomplete"; // even on mac, this uses Ctrl
+  CodeMirror.commands.autocomplete = function(cm) {
+    cm.showHint({ hint: CodeMirror.hint.anyword });
+  };
 
   this.codemirror = CodeMirror.fromTextArea(el, {
     mode: mode,
