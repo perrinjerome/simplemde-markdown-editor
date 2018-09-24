@@ -379,3 +379,6 @@
   opacity: 0.5;
 }
 
+.cm-s-default .cm-header {
+  color: black;
+}
