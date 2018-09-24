@@ -9,7 +9,14 @@ require("codemirror/addon/mode/overlay.js");
 require("codemirror/addon/display/placeholder.js");
 require("codemirror/addon/selection/mark-selection.js");
 require("codemirror/mode/gfm/gfm.js");
+// Include a few modes for inline code in ```
 require("codemirror/mode/xml/xml.js");
+require("codemirror/mode/python/python");
+require("codemirror/mode/javascript/javascript");
+require("codemirror/mode/html/html");
+require("codemirror/mode/css/css");
+require("codemirror/mode/sql/sql");
+require("codemirror/mode/bash/bash");
 var CodeMirrorSpellChecker = require("codemirror-spell-checker");
 var marked = require("marked");
 
