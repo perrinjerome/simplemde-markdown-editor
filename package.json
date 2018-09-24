@@ -23,6 +23,7 @@
   "dependencies": {
     "codemirror": "*",
     "codemirror-spell-checker": "*",
+    "gulp-uglify-es": "^1.0.4",
     "marked": "*",
     "showdown": "git+https://git@github.com/showdownjs/showdown.git"
   },
