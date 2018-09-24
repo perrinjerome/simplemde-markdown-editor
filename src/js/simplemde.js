@@ -1736,6 +1736,45 @@ SimpleMDE.prototype.render = function(el) {
     }
   });
 
+  // widgets for inline data-url image
+  var widgets = [];
+  const addImageWidget = () => {
+    this.codemirror.operation(() => {
+      for (i = 0; i < widgets.length; ++i)
+        this.codemirror.removeLineWidget(widgets[i]);
+      widgets.length = 0;
+
+      var value = this.codemirror.getValue().split("\n");
+      for (var lineNumber = 0; lineNumber < value.length; lineNumber++) {
+        var tokens = this.codemirror.getLineTokens(lineNumber);
+        for (var i = 0; i < tokens.length; i++) {
+          if (
+            tokens[i].type &&
+            tokens[i].type.match(/data-url/) &&
+            tokens[i].string.match(/^data.*/)
+          ) {
+            var div = document.createElement("div");
+            var img = div.appendChild(document.createElement("img"));
+            img.src = tokens[i].string;
+            //TODO
+            /*
+            img.addEventListener("dblclick", e => {
+              this.codemirror.setSelection({ line: lineNumber - 1, ch: 0 });
+            }); */
+
+            widgets.push(this.codemirror.addLineWidget(lineNumber - 1, div));
+          }
+        }
+      }
+    });
+  };
+  var waiting;
+  this.codemirror.on("change", function() {
+    clearTimeout(waiting);
+    waiting = setTimeout(addImageWidget, 1);
+  });
+  setTimeout(addImageWidget, 1);
+
   if (options.forceSync === true) {
     var cm = this.codemirror;
     cm.on("change", function() {
