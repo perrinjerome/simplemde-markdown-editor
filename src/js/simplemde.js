@@ -1,6 +1,7 @@
 /*global require,module*/
 /*eslint-disable no-useless-escape */
 "use strict";
+var showdown = require("showdown");
 var CodeMirror = require("codemirror");
 require("codemirror/addon/edit/continuelist.js");
 require("./codemirror/tablist");
@@ -1637,6 +1638,26 @@ SimpleMDE.prototype.render = function(el) {
     placeholder: options.placeholder || el.getAttribute("placeholder") || "",
     styleSelectedText:
       options.styleSelectedText != undefined ? options.styleSelectedText : true
+  });
+
+  var converter = new showdown.Converter();
+
+  this.codemirror.on("paste", function(cm, e) {
+    // Prevent the default pasting event and stop bubbling
+    e.preventDefault();
+    e.stopPropagation();
+    var paste = (e.clipboardData || window.clipboardData).getData("text/html");
+    // TODO: image
+    if (paste) {
+      paste = converter.makeMarkdown(paste);
+      // clean it up a bit
+      paste = paste.replace(/\<meta.*\>/g, "");
+      paste = paste.replace(/\<span\>\<\/span\>/g, "");
+      paste = paste.replace(/\<br\>/g, "");
+    } else {
+      paste = (e.clipboardData || window.clipboardData).getData("text");
+    }
+    cm.replaceSelection(paste);
   });
 
   if (options.forceSync === true) {

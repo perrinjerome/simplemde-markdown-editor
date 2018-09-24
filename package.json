@@ -23,7 +23,8 @@
   "dependencies": {
     "codemirror": "*",
     "codemirror-spell-checker": "*",
-    "marked": "*"
+    "marked": "*",
+    "showdown": "git+https://git@github.com/showdownjs/showdown.git"
   },
   "devDependencies": {
     "browserify": "*",
