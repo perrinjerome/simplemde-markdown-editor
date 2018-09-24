@@ -58,13 +58,15 @@ gulp.task(
   function() {
     var js_files = ["./debug/simplemde.js"];
 
-    return gulp
-      .src(js_files)
-      .pipe(concat("simplemde.min.js"))
-      .pipe(uglify())
-      .pipe(buffer())
-      .pipe(header(banner, { pkg: pkg }))
-      .pipe(gulp.dest("./dist/"));
+    return (
+      gulp
+        .src(js_files)
+        .pipe(concat("simplemde.min.js"))
+        //    .pipe(uglify())
+        .pipe(buffer())
+        .pipe(header(banner, { pkg: pkg }))
+        .pipe(gulp.dest("./dist/"))
+    );
   }
 );
 
