@@ -1578,12 +1578,16 @@ SimpleMDE.prototype.render = function(el) {
     false
   );
 
+  // an overlay which shorten long data-url of images
   CodeMirror.defineMode("gfm-data-url", function(config, parserConfig) {
     var dataURLOverlay = {
       token: function(stream) {
         if (stream.match("![")) {
           while (stream.next() != null)
-            if (stream.next() === "]" && stream.match("(data:")) {
+            if (
+              stream.next() === "]" &&
+              (stream.match("(data:") || stream.match("(<data:"))
+            ) {
               while (stream.next() != null)
                 if (stream.next() === ")") {
                   stream.eat(")");
