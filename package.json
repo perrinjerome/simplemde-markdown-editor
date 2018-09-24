@@ -24,7 +24,8 @@
     "@types/codemirror": "0.0.60",
     "codemirror": "*",
     "codemirror-spell-checker": "*",
-    "marked": "*"
+    "marked": "*",
+    "showdown": "git+https://git@github.com/showdownjs/showdown.git"
   },
   "devDependencies": {
     "browserify": "*",
