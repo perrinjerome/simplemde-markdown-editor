@@ -1,4 +1,5 @@
 /*global require,module*/
+/*eslint-disable no-useless-escape */
 "use strict";
 var CodeMirror = require("codemirror");
 require("codemirror/addon/edit/continuelist.js");
