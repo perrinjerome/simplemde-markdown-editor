@@ -1646,15 +1646,62 @@ SimpleMDE.prototype.render = function(el) {
     // Prevent the default pasting event and stop bubbling
     e.preventDefault();
     e.stopPropagation();
+    var plainText = (e.clipboardData || window.clipboardData).getData("text");
     var paste = (e.clipboardData || window.clipboardData).getData("text/html");
-    if (paste) { // text/html
-      paste = converter.makeMarkdown(paste);
-      // clean it up a bit
-      paste = paste.replace(/\<meta.*\>/g, "");
-      paste = paste.replace(/\<span\>\<\/span\>/g, "");
-      paste = paste.replace(/\<br\>/g, "");
-    } else { // text/plain
-      paste = (e.clipboardData || window.clipboardData).getData("text");
+    if (plainText.match(/(.+\t.*\n)+/)) {
+      // modified versions of https://github.com/jonmagic/copy-excel-paste-markdown/blob/master/script.js MIT Licence
+      var rows = plainText
+        .split(/[\n\u0085\u2028\u2029]|\r\n?/g)
+        .map(function(row) {
+          console.log(row);
+          return row.split("\t");
+        });
+      var columnWidths = rows[0].map(function(column, columnIndex) {
+        return Math.max.apply(
+          null,
+          rows.map(function(row) {
+            return row[columnIndex].length;
+          })
+        );
+      });
+      var markdownRows = rows.map(function(row) {
+        return (
+          "| " +
+          row
+            .map(function(column, index) {
+              return (
+                column +
+                Array(columnWidths[index] - column.length + 1).join(" ")
+              );
+            })
+            .join(" | ") +
+          " |"
+        );
+      });
+      markdownRows.splice(
+        1,
+        0,
+        "|" +
+          columnWidths
+            .map(function(width, index) {
+              return Array(columnWidths[index] + 3).join("-");
+            })
+            .join("|") +
+          "|"
+      );
+      paste = markdownRows.join("\n");
+    } else {
+      if (paste) {
+        // text/html
+        paste = converter.makeMarkdown(paste);
+        // clean it up a bit
+        paste = paste.replace(/\<meta.*\>/g, "");
+        paste = paste.replace(/\<span\>\<\/span\>/g, "");
+        paste = paste.replace(/\<br\>/g, "");
+      } else {
+        paste = plainText;
+        // text/plain
+      }
     }
     if (paste) {
       return cm.replaceSelection(paste);
