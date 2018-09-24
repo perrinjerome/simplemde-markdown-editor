@@ -382,3 +382,12 @@
 .cm-s-default .cm-header {
   color: black;
 }
+
+.cm-data-url {
+  background-color: grey;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
